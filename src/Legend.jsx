@@ -4,7 +4,6 @@ import "./Legend.css";
 import { useMap } from "react-leaflet";
 
 function Legend({json}) { 
-    const key = "keyName"
     const map = useMap();
     // console.log(map)
     useEffect(() => {
@@ -12,25 +11,30 @@ function Legend({json}) {
     // ok now i want to get the information that i have from the json file
     
     //const iterator = json.features.values();
-    
-    const unique = new Set();
-    for (let i = 0; i < json.features.length; i++){
-
-        const key = 'floor_color';
-        const value = json.features[i].properties[key];
-        unique.add(value)
-        // hacky fix: check for value 
+    const colormap = {
+                 "0": "#ffffe5", 
+                 "-1": "#fee390", 
+                 "-2": "#fe9829", 
+                 "-3": "#cb4b02", 
+                 "-4": "#662506",
     }
-    // man this is fucking hacky and gross
-    const sorted = [...unique].sort();
+    const namemap = {
+        '0': ' km',
+        '-1': ' 10 km',
+        '-2': ' 100 km',
+        '-3': ' 1,000 km',
+        '-4': ' 10,000 km'
+    }
     const legend = L.control({ position: "topright" });
     legend.onAdd = () => {
         const div = L.DomUtil.create("div", "info legend");
-        for (const val of sorted) { 
-            console.log(`<i style="background-color:`+ val + `"></i><br>`)
-            div.innerHTML += '<i style="background: '+val + '"></i>' +'&ndash;<br>'; 
-        }
-        
+        for (const val in colormap) {
+            const per = namemap[val];
+            const color = colormap[val];
+            console.log(color);
+            div.innerHTML += '<i style="background: '+ color + '"></i>' +'&ndash; one sensor every'+per+ '<br> '; 
+        } 
+        div.innerHTML += '<i style="background: '+"#979797"+'"></i> &ndash; no sensors <br> '; 
         return div;
     };
 

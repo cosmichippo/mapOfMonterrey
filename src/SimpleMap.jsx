@@ -45,19 +45,37 @@ const SimpleMap = ({mapData}) => {
       })
   }
 
-  // instead of using useState, try using useMap provided by React-Leaflet
-  // simple linear interpolation function
-  const lerp = (my_val, max_val, min_val, color_start, color_end) => {
-    // get size based on max / min
-    const float = (my_val - min_val) / (max_val - min_val);
-    return (start * (1 - float) + end * float)
-  };
+  // simple linear interpolation function (UNUSED)
+  //const lerp = (my_val, max_val, min_val, color_start, color_end) => {
+    //// get size based on max / min
+    //const float = (my_val - min_val) / (max_val - min_val);
+    //return (start * (1 - float) + end * float)
+  //};
   
+  // log : 1 - 10, 2 100, 3, 1000
   const stylefunction = (feature)=> {
-    if (feature.properties.floor_color){
-      return {color: feature.properties.floor_color, fillOpacity: 0.5};
+    const map = {
+                 "0": "#ffffe5", 
+                 "-1": "#fee390", 
+                 "-2": "#fe9829", 
+                 "-3": "#cb4b02", 
+                 "-4": "#662506",
     }
-    return {color: "#000000ff", fillOpacity: 0.5};
+
+    let legendcolor = "#000000ff";
+    if ("density_log10_floor" in feature.properties){
+      const key = feature.properties.density_log10_floor
+      
+      if (key in map) {
+        legendcolor = map[key]; 
+      } else {
+        // we don't have a color value for it
+        legendcolor = "#979797";
+      }
+      return {color: legendcolor, fillOpacity: 0.5};
+
+    }
+    return {color: legendcolor, fillOpacity: 0.5};
   }
  
 
